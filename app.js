@@ -21,7 +21,6 @@ async function queries() {
     try {
         const response = await inquirer.prompt(questions.roleSelect);
         // this is just to update the questions depending on which role was picked
-        questions.role = response.role;
         const employeeQuestions = await inquirer.prompt(questions.employeeQueries);
         let { name, id, email } = employeeQuestions;
         switch(response.role) {
@@ -52,7 +51,7 @@ async function queries() {
 }
 
 function createApp() {
-    if (!fs.existsSync(OUTPUT_DIR)) fs.mkdir(OUTPUT_DIR);
+    if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR);
     fs.writeFileSync(outputPath, render(employees), err => {
         if (err) console.log(err);
     });
