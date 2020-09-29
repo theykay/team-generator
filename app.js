@@ -44,6 +44,7 @@ async function queries() {
         if(oneMore.again) queries();
 
         createApp();
+        console.log("Your web application is complete! Check in the output folder for \"team\.html\"");
 
     } catch (error) {
         if (error) console.log(error);
