@@ -11,10 +11,52 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
-console.log("Welcome to the Team Generator!")
+console.log("Welcome to the Team Generator!");
 
+const employees = [];
 
+queries();
 
+async function queries() {
+    try {
+        const response = await inquirer.prompt(questions.roleSelect);
+        // this is just to update the questions depending on which role was picked
+        questions.role = response.role;
+        const employeeQuestions = await inquirer.prompt(questions.employeeQueries);
+        let { name, id, email } = employeeQuestions;
+        switch(response.role) {
+            case "Manager":
+                const office = await inquirer.prompt(questions.managerQuery);
+                const manager = new Manager(name, id, email, office.officeNumber);
+                employees.push(manager);
+                break;
+            case "Engineer":
+                const username = await inquirer.prompt(questions.engineerQuery);
+                const engineer = new Engineer(name, id, email, username.github);
+                employees.push(engineer);
+                break;
+            case "Intern":
+                const institution = await inquirer.prompt(questions.internQuery);
+                const intern = new Intern(name, id, email, institution.school);
+                employees.push(intern); 
+        }
+        
+        const oneMore = await inquirer.prompt(questions.again);
+        if(oneMore.again) queries();
+
+        createApp();
+
+    } catch (error) {
+        if (error) console.log(error);
+    }
+}
+
+function createApp() {
+    if (!fs.existsSync(OUTPUT_DIR)) fs.mkdir(OUTPUT_DIR);
+    fs.writeFileSync(outputPath, render(employees), err => {
+        if (err) console.log(err);
+    });
+}
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
